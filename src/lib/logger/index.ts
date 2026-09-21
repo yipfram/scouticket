@@ -41,6 +41,7 @@ export type ContexteJournal = ContexteJournalTechnique | ContexteJournalAudit;
 
 const expressionCleSensible =
   /(email|mail|password|mot_?de_?passe|authorization|cookie|token|secret|base64|attachment|piece_?jointe|donnees|data|body|corps|user_?id|org_?id|message_?id|file_?name|nom_?fichier)/i;
+const clesJournalNonSensibles = new Set(["typeEmail"]);
 const expressionEmail = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
 const expressionJeton = /\b(?:bearer|basic)\s+[^\s]+/gi;
 
@@ -77,7 +78,7 @@ function nettoyerValeur(valeur: unknown, profondeur = 0): unknown {
     return Object.fromEntries(
       Object.entries(valeur).map(([cle, element]) => [
         cle,
-        expressionCleSensible.test(cle)
+        expressionCleSensible.test(cle) && !clesJournalNonSensibles.has(cle)
           ? "[masqué]"
           : nettoyerValeur(element, profondeur + 1),
       ]),
