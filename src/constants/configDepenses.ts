@@ -18,6 +18,7 @@ export type TypeDepense = (typeof TYPES_DEPENSES)[number];
 
 export const MODES_PAIEMENT = [
   "Carte bancaire",
+  "Carte bancaire personnelle",
   "Chèque",
   "Virement",
   "Espèces",
