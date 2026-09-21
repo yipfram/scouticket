@@ -10,11 +10,12 @@ export async function envoyerEmailInvitation(parametres: {
   if (!urlApplication) throw new Error("APP_URL_UNDEFINED");
   const url = new URL("/invitation", urlApplication);
   url.searchParams.set("id", parametres.invitationId);
-  await envoyerMail({
-    to: parametres.destinataire,
-    subject: `Invitation à rejoindre ${parametres.nomGroupe} sur Scouticket`,
-    text: `Bonjour,\n\n${parametres.nomInvitant} vous invite à rejoindre le groupe ${parametres.nomGroupe} sur Scouticket. Connectez-vous avec l’adresse invitée, puis acceptez l’invitation :\n${url}\n\nCe lien expire dans 15 jours. Si cette invitation ne vous concerne pas, ignorez cet e-mail.`,
-    html: `
+  await envoyerMail(
+    {
+      to: parametres.destinataire,
+      subject: `Invitation à rejoindre ${parametres.nomGroupe} sur Scouticket`,
+      text: `Bonjour,\n\n${parametres.nomInvitant} vous invite à rejoindre le groupe ${parametres.nomGroupe} sur Scouticket. Connectez-vous avec l’adresse invitée, puis acceptez l’invitation :\n${url}\n\nCe lien expire dans 15 jours. Si cette invitation ne vous concerne pas, ignorez cet e-mail.`,
+      html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="background-color: #1E3A8A; color: #ffffff; padding: 20px; text-align: center;">
           <h1 style="margin: 0; font-size: 24px;">📜 Scouticket</h1>
@@ -34,5 +35,7 @@ export async function envoyerEmailInvitation(parametres: {
         </div>
       </div>
     `,
-  });
+    },
+    "invitation",
+  );
 }

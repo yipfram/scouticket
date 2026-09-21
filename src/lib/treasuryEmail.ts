@@ -5,11 +5,12 @@ export async function envoyerEmailValidationTresorerie(parametres: {
   nomGroupe: string;
   url: string;
 }) {
-  await envoyerMail({
-    to: parametres.destinataire,
-    subject: `Confirmez la trésorerie du groupe ${parametres.nomGroupe}`,
-    text: `Bonjour,\n\nUn responsable a rattaché cette adresse à la trésorerie du groupe ${parametres.nomGroupe}. Confirmez ce rattachement :\n${parametres.url}\n\nCe lien expire dans 48 heures. Si cette demande ne vous concerne pas, ignorez cet e-mail.`,
-    html: `
+  await envoyerMail(
+    {
+      to: parametres.destinataire,
+      subject: `Confirmez la trésorerie du groupe ${parametres.nomGroupe}`,
+      text: `Bonjour,\n\nUn responsable a rattaché cette adresse à la trésorerie du groupe ${parametres.nomGroupe}. Confirmez ce rattachement :\n${parametres.url}\n\nCe lien expire dans 48 heures. Si cette demande ne vous concerne pas, ignorez cet e-mail.`,
+      html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="background-color: #1E3A8A; color: #ffffff; padding: 20px; text-align: center;">
           <h1 style="margin: 0; font-size: 24px;">📜 Scouticket</h1>
@@ -35,5 +36,7 @@ export async function envoyerEmailValidationTresorerie(parametres: {
         </div>
       </div>
     `,
-  });
+    },
+    "validation_tresorerie",
+  );
 }

@@ -36,6 +36,14 @@ const schemaTexteHtml = z
 
 const schemaCouleurHtml = z.string().regex(/^#[0-9a-f]{6}$/i);
 
+export type TypeEmail =
+  | "note_de_frais"
+  | "validation_tresorerie"
+  | "invitation"
+  | "verification_compte"
+  | "reinitialisation_mot_de_passe"
+  | "autre";
+
 export const echapperHtml = (valeur: string) => schemaTexteHtml.parse(valeur);
 
 // Configuration du transporteur SMTP générique
@@ -68,7 +76,16 @@ function creerExpediteurEmail() {
   };
 }
 
-export async function envoyerMail(optionsEmail: Omit<SendMailOptions, "from">) {
+/**
+ * Envoie un e-mail via SMTP et journalise son résultat avec son type fonctionnel.
+ *
+ * @param optionsEmail Contenu de l’e-mail transmis au transporteur SMTP.
+ * @param typeEmail Type fonctionnel, utilisé uniquement pour les journaux.
+ */
+export async function envoyerMail(
+  optionsEmail: Omit<SendMailOptions, "from">,
+  typeEmail: TypeEmail = "autre",
+) {
   const transporteur = creerTransporteurEmail();
 
   try {
@@ -89,12 +106,14 @@ export async function envoyerMail(optionsEmail: Omit<SendMailOptions, "from">) {
     journal.info("smtp.email_envoye", {
       categorie: "email",
       resultat: "succes",
+      details: { typeEmail },
     });
     return info;
   } catch (error) {
     journal.erreur("smtp.envoi_email_echoue", {
       categorie: "email",
       erreur: error,
+      details: { typeEmail },
     });
     throw error;
   }
@@ -327,6 +346,6 @@ Email envoyé automatiquement par Scouticket.
     attachments: piecesJointesAnalysees,
   };
 
-  const info = await envoyerMail(optionsEmail);
+  const info = await envoyerMail(optionsEmail, "note_de_frais");
   return { success: true, messageId: info.messageId };
 };
