@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type SubmitEvent } from "react";
 import Link from "next/link";
 import { EditeurUnites } from "@/components/EditeurUnites";
 import { clientAuth } from "@/lib/auth-client";
@@ -31,7 +31,7 @@ export default function PageGestionUnites() {
       .finally(() => setChargement(false));
   }, []);
 
-  const enregistrer = async (event: FormEvent) => {
+  const enregistrer = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     setEnregistrement(true);
     setMessage("");

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, type FormEvent } from "react";
+import { useState, useEffect, useRef, type SubmitEvent } from "react";
 import Image from "next/image";
 import {
   ClipboardDocumentListIcon,
@@ -220,7 +220,7 @@ export function FormulaireDepense({
     });
   };
 
-  const envoyerDepense = async (evenement: FormEvent) => {
+  const envoyerDepense = async (evenement: SubmitEvent<HTMLFormElement>) => {
     evenement.preventDefault();
 
     setAfficherErreursValidation(true);

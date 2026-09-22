@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { type FormEvent, useEffect, useRef, useState } from "react";
+import { type SubmitEvent, useEffect, useRef, useState } from "react";
 import { clientAuth } from "@/lib/auth-client";
 
 function MessageErreur({ message }: { readonly message: string }) {
@@ -44,7 +44,7 @@ export function FormulaireConnexionEmail({
     window.sessionStorage.setItem("invitation-retour", callbackURL);
   }, [callbackURL]);
 
-  const connecter = async (event: FormEvent) => {
+  const connecter = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     setEnCours(true);
     setErreur("");
@@ -184,7 +184,7 @@ export function FormulaireMotDePasseOublie() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [enCours, setEnCours] = useState(false);
-  const envoyer = async (event: FormEvent) => {
+  const envoyer = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     setEnCours(true);
     await clientAuth.requestPasswordReset({
@@ -236,7 +236,7 @@ export function FormulaireNouveauMotDePasse() {
     token ? "" : "Ce lien est invalide ou expiré.",
   );
   const [enCours, setEnCours] = useState(false);
-  const modifier = async (event: FormEvent) => {
+  const modifier = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!token || motDePasse !== confirmation) {
       setErreur("Les mots de passe ne correspondent pas.");

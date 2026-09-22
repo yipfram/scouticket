@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type SubmitEvent } from "react";
 import { EditeurUnites } from "@/components/EditeurUnites";
 import { UNITES_PAR_DEFAUT, type UniteGroupe } from "@/lib/group";
 
@@ -57,13 +57,13 @@ export function ConfigurationGroupe({
   const [enregistrement, setEnregistrement] = useState(false);
   const [erreur, setErreur] = useState("");
 
-  const passerAuxUnites = (event: FormEvent) => {
+  const passerAuxUnites = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     setErreur("");
     setEtape(2);
   };
 
-  const enregistrer = async (event: FormEvent) => {
+  const enregistrer = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     setEnregistrement(true);
     setErreur("");
