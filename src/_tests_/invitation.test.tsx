@@ -11,6 +11,7 @@ const mocks = vi.hoisted(() => ({
   rafraichirSession: vi.fn(),
   remplacer: vi.fn(),
   connecterEmail: vi.fn(),
+  derniereMethode: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({
@@ -34,6 +35,7 @@ vi.mock("@/lib/auth-client", () => ({
       setActive: mocks.activerGroupe,
     },
     signIn: { email: mocks.connecterEmail },
+    getLastUsedLoginMethod: mocks.derniereMethode,
   },
 }));
 
@@ -56,6 +58,8 @@ describe("Page d’invitation", () => {
     mocks.rafraichirSession.mockReset();
     mocks.remplacer.mockReset();
     mocks.connecterEmail.mockReset();
+    mocks.derniereMethode.mockReset();
+    mocks.derniereMethode.mockReturnValue(null);
     window.sessionStorage.clear();
     window.history.replaceState({}, "", "/");
     vi.stubGlobal(

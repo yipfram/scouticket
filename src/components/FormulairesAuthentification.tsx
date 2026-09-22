@@ -16,7 +16,11 @@ function MessageErreur({ message }: { readonly message: string }) {
 const classeChamp =
   "mt-2 w-full rounded-lg border border-zinc-300 bg-white p-3 text-zinc-900 outline-none focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/20";
 
-export function FormulaireConnexionEmail() {
+export function FormulaireConnexionEmail({
+  estDerniereMethode: estDerniereMethodeInitiale = false,
+}: {
+  readonly estDerniereMethode?: boolean;
+}) {
   const recherche = useSearchParams();
   const retour = recherche?.get("callbackURL");
   const callbackURL = retour?.startsWith("/") ? retour : "/";
@@ -27,6 +31,13 @@ export function FormulaireConnexionEmail() {
   const [message, setMessage] = useState("");
   const [enCours, setEnCours] = useState(false);
   const referenceFormulaire = useRef<HTMLFormElement>(null);
+  const [estDerniereMethode, setEstDerniereMethode] = useState(
+    estDerniereMethodeInitiale,
+  );
+
+  useEffect(() => {
+    setEstDerniereMethode(clientAuth.getLastUsedLoginMethod() === "email");
+  }, []);
 
   useEffect(() => {
     if (!callbackURL.startsWith("/invitation?id=")) return;
@@ -143,12 +154,19 @@ export function FormulaireConnexionEmail() {
         </div>
       )}
       <div className="grid grid-cols-2 gap-2">
-        <button
-          disabled={enCours}
-          className="cursor-pointer rounded-lg bg-[#1E3A8A] px-5 py-3 font-medium text-white transition-colors hover:bg-[#162d69] disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {enCours ? "Connexion…" : "Se connecter"}
-        </button>
+        <div className="relative">
+          {estDerniereMethode && (
+            <span className="absolute -top-2 right-2 z-10 rounded-full border border-blue-200 bg-white px-2 py-0.5 text-xs font-medium text-[#1E3A8A] shadow-sm">
+              Dernière connexion
+            </span>
+          )}
+          <button
+            disabled={enCours}
+            className="cursor-pointer w-full rounded-lg bg-[#1E3A8A] px-5 py-3 font-medium text-white transition-colors hover:bg-[#162d69] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {enCours ? "Connexion…" : "Se connecter"}
+          </button>
+        </div>
         <button
           type="button"
           disabled={enCours}
