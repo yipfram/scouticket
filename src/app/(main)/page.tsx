@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { clientAuth } from "@/lib/auth-client";
 import { FormulaireDepense } from "@/components/FormulaireDepense";
 import { CapturePhoto } from "@/components/PhotoCapture";
@@ -71,6 +72,7 @@ function BandeauInvitationEnAttente({
 
 /** Affiche l’accueil du groupe et les invitations de l’utilisateur connecté. */
 export default function Home() {
+  const routeur = useRouter();
   const { data: session, isPending } = clientAuth.useSession();
   const { data: organisation } = clientAuth.useActiveOrganization();
   const { data: organisations } = clientAuth.useListOrganizations();
@@ -198,16 +200,17 @@ export default function Home() {
     organisation,
   ]);
 
+  useEffect(() => {
+    if (!isPending && !session) routeur.replace("/sign-in");
+  }, [isPending, routeur, session]);
+
   if (isPending)
     return (
       <main className="min-h-screen bg-zinc-50 p-6 text-center text-zinc-600">
         Chargement…
       </main>
     );
-  if (!session) {
-    if (typeof window !== "undefined") window.location.assign("/sign-in");
-    return null;
-  }
+  if (!session) return null;
   const creerGroupe = async () => {
     const nom = nomGroupe.trim();
     if (!nom) return;
@@ -313,7 +316,7 @@ export default function Home() {
               onClick={() =>
                 void clientAuth.signOut({
                   fetchOptions: {
-                    onSuccess: () => window.location.assign("/sign-in"),
+                    onSuccess: () => routeur.replace("/sign-in"),
                   },
                 })
               }
