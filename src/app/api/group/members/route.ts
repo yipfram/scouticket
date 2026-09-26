@@ -23,8 +23,14 @@ export async function GET(requete: Request) {
         "SELECT name FROM organization WHERE id = $1",
         [identifiantOrganisation],
       ),
-      pool.query<{ id: string; nom: string; email: string; role: string }>(
-        `SELECT member.id, "user".name AS nom, "user".email, member.role
+      pool.query<{
+        id: string;
+        identifiantUtilisateur: string;
+        nom: string;
+        email: string;
+        role: string;
+      }>(
+        `SELECT member.id, member."userId" AS "identifiantUtilisateur", "user".name AS nom, "user".email, member.role
            FROM member
            JOIN "user" ON "user".id = member."userId"
           WHERE member."organizationId" = $1

@@ -11,7 +11,13 @@ type Invitation = {
   expiresAt: string | Date;
   expiree: boolean;
 };
-type Membre = { id: string; nom: string; email: string; role: string };
+type Membre = {
+  id: string;
+  identifiantUtilisateur: string;
+  nom: string;
+  email: string;
+  role: string;
+};
 
 function traduireMessageErreurInvitation(erreur: unknown) {
   const code =
@@ -39,6 +45,7 @@ function traduireMessageErreurInvitation(erreur: unknown) {
 }
 
 export default function PageGestionMembres() {
+  const { data: session } = clientAuth.useSession();
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [autorise, setAutorise] = useState<boolean>();
@@ -49,6 +56,7 @@ export default function PageGestionMembres() {
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [membres, setMembres] = useState<Membre[]>([]);
   const [renvoiEnCours, setRenvoiEnCours] = useState<string>();
+  const [membreEnCours, setMembreEnCours] = useState<string>();
   const chargementLance = useRef(false);
   const chargerMembres = useCallback(async () => {
     try {
@@ -153,6 +161,48 @@ export default function PageGestionMembres() {
       setRenvoiEnCours(undefined);
     }
   };
+  const modifierRole = async (membre: Membre, role: string) => {
+    setMembreEnCours(membre.id);
+    try {
+      const resultat = await clientAuth.organization.updateMemberRole({
+        memberId: membre.id,
+        role,
+        organizationId: organisation?.id,
+      });
+      if (resultat.error) {
+        setMessage("Impossible de modifier le rôle de ce membre.");
+        return;
+      }
+      setMessage("Rôle du membre modifié.");
+      await chargerMembres();
+    } catch {
+      setMessage("Impossible de modifier le rôle de ce membre.");
+    } finally {
+      setMembreEnCours(undefined);
+    }
+  };
+  const retirerMembre = async (membre: Membre) => {
+    const nomMembre = membre.nom || membre.email;
+    if (!window.confirm(`Retirer ${nomMembre} de ce groupe ?`)) return;
+
+    setMembreEnCours(membre.id);
+    try {
+      const resultat = await clientAuth.organization.removeMember({
+        memberIdOrEmail: membre.id,
+        organizationId: organisation?.id,
+      });
+      if (resultat.error) {
+        setMessage("Impossible de retirer ce membre du groupe.");
+        return;
+      }
+      setMessage("Membre retiré du groupe.");
+      await chargerMembres();
+    } catch {
+      setMessage("Impossible de retirer ce membre du groupe.");
+    } finally {
+      setMembreEnCours(undefined);
+    }
+  };
   if (autorise === false)
     return (
       <main className="min-h-screen bg-zinc-50 p-6 text-center text-zinc-700">
@@ -228,9 +278,39 @@ export default function PageGestionMembres() {
                     </span>
                   )}
                 </span>
-                <span className="shrink-0 text-zinc-600">
-                  {membre.role === "owner" ? "Responsable" : "Membre"}
-                </span>
+                {membre.identifiantUtilisateur === session?.user.id ? (
+                  <span className="shrink-0 text-zinc-600">
+                    {membre.role === "owner"
+                      ? "Responsable"
+                      : membre.role === "admin"
+                        ? "Administrateur"
+                        : "Membre"}
+                  </span>
+                ) : (
+                  <span className="flex shrink-0 items-center gap-3">
+                    <select
+                      aria-label={`Rôle de ${membre.nom || membre.email}`}
+                      value={membre.role}
+                      disabled={membreEnCours === membre.id}
+                      onChange={(e) =>
+                        void modifierRole(membre, e.target.value)
+                      }
+                      className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-zinc-700 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      <option value="member">Membre</option>
+                      <option value="admin">Administrateur</option>
+                      <option value="owner">Responsable</option>
+                    </select>
+                    <button
+                      type="button"
+                      disabled={membreEnCours === membre.id}
+                      onClick={() => void retirerMembre(membre)}
+                      className="text-rose-700 underline disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      Retirer
+                    </button>
+                  </span>
+                )}
               </li>
             ))}
             {invitations.map((invitation) => (
