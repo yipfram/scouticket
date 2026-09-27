@@ -2,6 +2,7 @@
 
 ## 📚 Vue d'ensemble du dépôt
 
+L'application principale scouticket est hébergé sur /, pour le site internet de scouticket, il est hébergé sur /docs.
 Ce dépôt héberge une application **Next.js 16** (App Router) pour la gestion des justificatifs pour les groupes scouts. La stack comprend :
 
 - **TypeScript**
