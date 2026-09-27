@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
-const versionDeploiement = process.env.GITHUB_SHA || Date.now().toString();
+const versionDeploiement =
+  process.env.SOURCE_COMMIT ||
+  process.env.CI_COMMIT_SHA ||
+  Date.now().toString();
 
 const nextConfig = {
   // Générées pour être envoyées à OpenObserve durant la release, puis retirées

@@ -25,6 +25,8 @@ ENV BETTER_AUTH_SECRET=build-only-secret-not-used-at-runtime-1234567890 \
 
 COPY --from=dependances /app/node_modules ./node_modules
 COPY . .
+# Pour la génération de sourcemap
+# ARG CI_COMMIT_SHA
 RUN pnpm build
 
 FROM base AS execution
