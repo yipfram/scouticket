@@ -183,6 +183,9 @@ export default defineConfig({
         link: "https://github.com/yipfram/sgdf-notes-de-frais",
       },
     ],
+    footer: {
+      message: '<a href="https://status.scouticket.fr">État du service</a>',
+    },
   },
   sitemap: {
     hostname: "https://scouticket.fr",
